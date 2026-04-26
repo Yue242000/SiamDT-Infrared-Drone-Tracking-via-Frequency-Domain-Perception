@@ -48,6 +48,10 @@ $$X_{u,v}=\sum_{h=0}^{H-1}\sum_{w=0}^{W-1}x_{h,w}e^{-j2\pi(\frac{hu}{H}+\frac{wv
 
 | 算法 | 骨干网络 | 精确度 (Precision) | 成功率 (Success Rate) |
 | :--- | :--- | :--- | :--- |
+| SiamFC | AlexNet | 0.4798 | 0.3516 |
+| SiamRPN++ | ResNet-50 | 0.5960 | 0.4578 | 
+| ARTrack | Transformer | 0.6257 | 0.4856 |
+| TransUSF | Transformer | 0.6959 | 0.5582 |
 | SiamDT (Baseline) | Swin-Tiny | 0.6885 | 0.5420 |
 | **Ours** | **Swin-CA-BiFPN** | **0.7050** | **0.6035** |
 
