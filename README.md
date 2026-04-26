@@ -49,7 +49,7 @@ $$X_{u,v}=\sum_{h=0}^{H-1}\sum_{w=0}^{W-1}x_{h,w}e^{-j2\pi(\frac{hu}{H}+\frac{wv
 | 算法 | 骨干网络 | 精确度 (Precision) | 成功率 (Success Rate) |
 | :--- | :--- | :--- | :--- |
 | SiamDT (Baseline) [cite: 384] | Swin-Tiny | 0.6885 | 0.5420 |
-| **SiamDT++ (Ours)** [cite: 384] | **Swin-CA-BiFPN** | **0.7050** | **0.6035** |
+| **Ours** [cite: 384] | **Swin-CA-BiFPN** | **0.7050** | **0.6035** |
 
 > **结论**：相较于基线 SiamDT，成功率提升了 **6.15%**。同时，在真实地空背景数据集下，精确度达到了 **90.35%** 。
 
@@ -61,7 +61,7 @@ $$X_{u,v}=\sum_{h=0}^{H-1}\sum_{w=0}^{W-1}x_{h,w}e^{-j2\pi(\frac{hu}{H}+\frac{wv
 | SiamDT (Baseline) [cite: 430] | 0.6885 | 0.5420 | - |
 | + Swin-CA-BiFPN [cite: 430] | 0.6935 | 0.5785 | 缓解特征弥散 |
 | + FDCA [cite: 430] | 0.7030 | 0.5945 | 抑制频域杂波 |
-| **SiamDT++ (Final)**| **0.7050** | **0.6035** | 动态权重分配 |
+| **Ours**| **0.7050** | **0.6035** | 动态权重分配 |
 
 ---
 
