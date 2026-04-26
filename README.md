@@ -1,4 +1,4 @@
-# SiamDT-Infrared-Drone-Tracking-via-Frequency-Domain-Perception
+# SiamDT++: Infrared Drone Tracking via Frequency Domain Perception
 Official implementation of "SiamDT++: Infrared Drone Tracking via Frequency Domain Perception". A robust SOTA tracker for tiny IR targets using FFT spectral gating and Swin-CA-BiFPN.
 
 [![Pytorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white)](https://pytorch.org/)
