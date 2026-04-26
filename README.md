@@ -5,81 +5,80 @@ Official implementation of "SiamDT++: Infrared Drone Tracking via Frequency Doma
 [![Paper](https://img.shields.io/badge/Paper-PDF-red.svg)](#) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## Abstract
 
-## 摘要 (Abstract)
+Tracking Low, Slow, and Small (LSS) Unmanned Aerial Vehicles (UAVs) in the infrared (IR) domain is highly challenging, primarily due to **feature sparsity**, **thermal crossover**, and **complex background clutter**.
 
-在红外（IR）领域追踪“低慢小”无人机（UAV）极具挑战性，主要面临**特征稀疏**、**热交叉（Thermal Crossover）**以及**复杂背景干扰**等难题。
+To overcome the issues of feature dispersion and inadequate background suppression in existing Siamese networks, we propose **SiamDT++**. This architecture integrates multi-scale frequency-domain perception and a dynamic focusing mechanism:
+1. **Swin-CA-BiFPN**: Bidirectionally fuses shallow textures and deep semantics to enhance the perception of point-like targets.
+2. **FDCA (Frequency Domain Context Attention)**: Utilizes spectral gating to suppress low-frequency clutter and enhance high-frequency edges, resolving feature degradation under thermal crossover.
+3. **Dynamic Focusing Prediction Head**: Reconstructs the loss function (Focal Loss + Wise-IoU) to achieve pixel-level regression precision.
 
-为了克服现有孪生网络中的特征弥散和背景抑制不足，我们提出了 **SiamDT++**。该架构集成了多尺度频域感知和动态聚焦机制：
-1. **Swin-CA-BiFPN**：双向融合浅层纹理与深层语义，增强对点状目标的感知。
-2. **FDCA (频域感知交互模块)**：利用频谱门控抑制低频杂波并增强高频边缘，解决热交叉下的特征退化。
-3. **动态聚焦预测头**：重构损失函数（Focal Loss + Wise-IoU），实现像素级回归精度。
+## Technical Highlights
 
-## 核心创新 (Technical Highlights)
+### 1. Swin-CA-BiFPN: Geometry-Aware Feature Extraction
+To address the feature dispersion issue where tiny targets (<5 pixels) are easily lost in deep networks, we designed a hybrid architecture:
+* **Bidirectional Feature Pyramid (BiFPN)**: Transfers shallow high-resolution textures to deep layers via a bottom-up pathway, preserving spatial indices.
+* **Coordinate Attention (CA)**: Decomposes attention into two 1D encoding processes, forcing the network to focus on the precise localization of targets.
 
-### 1. Swin-CA-BiFPN：几何感知特征提取
-针对极小目标（<5 像素）在深层网络中容易丢失的问题，我们设计了混合架构：
-* **双向特征金字塔 (BiFPN)**：通过 Bottom-up 路径将浅层高分辨率纹理传递给深层，保留空间索引。
-* **坐标注意力 (Coordinate Attention)**：将注意力分解为两个一维编码过程，强制网络关注目标的精确定位。
-
-### 2. FDCA：频域全局感知交互
-当目标与背景温度接近（热交叉）时，空间特征往往失效。FDCA 模块通过傅里叶变换在频域进行处理：
+### 2. FDCA: Frequency Domain Global Context Interaction
+When target and background temperatures converge (thermal crossover), spatial features often fail. The FDCA module processes this in the frequency domain via Fourier Transform:
 $$X_{u,v}=\sum_{h=0}^{H-1}\sum_{w=0}^{W-1}x_{h,w}e^{-j2\pi(\frac{hu}{H}+\frac{wv}{W})}$$
-利用可学习的频谱权重 $W_{gate}$ 滤除背景噪声，显著提升信噪比（SNR）。
+By utilizing a learnable spectral weight $W_{gate}$ to filter out background noise, the Signal-to-Noise Ratio (SNR) is significantly improved.
 
-### 3. 动态聚焦损失系统
-为了解决正负样本极度不平衡问题 ：
-* **分类**：引入 **Focal Loss**，使模型聚焦于特征稀疏的硬样本（Hard Samples）。
-* **回归**：采用 **Wise-IoU (WIoU)**，根据锚框质量动态分配梯度增益，防止标注噪声误导模型。
+### 3. Dynamic Focusing Loss System
+To solve the extreme imbalance between positive and negative samples:
+* **Classification**: Introduces **Focal Loss** to make the model focus on feature-sparse hard samples.
+* **Regression**: Adopts **Wise-IoU (WIoU)** to dynamically allocate gradient gains based on anchor box quality, preventing the model from being misled by annotation noise.
 
 ---
 
-## 模型架构 (Architecture)
+## Architecture
 
 ![Overall Framework](./assets/framework.png)
-*图 1: SiamDT++ 算法总体框架图*
+*Figure 1: Overall Framework of the SiamDT++ Algorithm*
 
 ---
 
-## 实验结果 (Experimental Results)
+## Experimental Results
 
-### 1. 定量分析 (Quantitative Results)
-我们在 **Anti-UAV410** 数据集上进行了 One-Pass Evaluation (OPE) 评估：
+### 1. Quantitative Results
+We evaluated our model on the highly challenging **Anti-UAV410** dataset using One-Pass Evaluation (OPE):
 
-| 算法 | 骨干网络 | 精确度 (Precision) | 成功率 (Success Rate) |
+| Algorithm | Backbone | Precision | Success Rate |
 | :--- | :--- | :--- | :--- |
 | SiamFC | AlexNet | 0.4798 | 0.3516 |
 | SiamRPN++ | ResNet-50 | 0.5960 | 0.4578 | 
 | ARTrack | Transformer | 0.6257 | 0.4856 |
 | TransUSF | Transformer | 0.6959 | 0.5582 |
 | SiamDT (Baseline) | Swin-Tiny | 0.6885 | 0.5420 |
-| **Ours** | **Swin-CA-BiFPN** | **0.7050** | **0.6035** |
+| **SiamDT++ (Ours)** | **Swin-CA-BiFPN** | **0.7050** | **0.6035** |
 
-> **结论**：相较于基线 SiamDT，成功率提升了 **6.15%**。同时，在真实地空背景数据集下，精确度达到了 **90.35%** 。
+> **Conclusion**: Compared to the baseline SiamDT, the success rate achieves a significant leap of **6.15%**. Furthermore, on a real-world ground/air background dataset, the precision of SiamDT++ reaches an impressive **90.35%**.
 
-### 2. 消融实验 (Ablation Study)
-验证各模块在 Anti-UAV410 上的有效性：
+### 2. Ablation Study
+Validating the effectiveness of each module on Anti-UAV410:
 
-| 实验模型 | 精确度 | 成功率 | 提升点 |
+| Model | Precision | Success Rate | Improvement Focus |
 | :--- | :--- | :--- | :--- |
 | SiamDT (Baseline) | 0.6885 | 0.5420 | - |
-| + Swin-CA-BiFPN  | 0.6935 | 0.5785 | 缓解特征弥散 |
-| + FDCA | 0.7030 | 0.5945 | 抑制频域杂波 |
-| **Ours**| **0.7050** | **0.6035** | 动态权重分配 |
+| + Swin-CA-BiFPN | 0.6935 | 0.5785 | Alleviates feature dispersion |
+| + FDCA | 0.7030 | 0.5945 | Suppresses frequency domain clutter |
+| **SiamDT++ (Ours)** | **0.7050** | **0.6035** | Dynamic weight allocation |
 
 ---
 
-## 定性可视化 (Qualitative Visualization)
+## Qualitative Visualization
 
 ![Tracking Results](./assets/1.png)
 ![Tracking Results](./assets/2.png)
 ![Tracking Results](./assets/3.png)
 ![Tracking Results](./assets/4.png)
 ![Tracking Results](./assets/5.png)
-*在复杂地形、热交叉、明亮杂波干扰下的追踪表现对比*
+*Tracking performance comparison under complex terrain, thermal crossover, and bright clutter interference.*
 
+---
 
-## 快速开始 (Getting Started)
+## Getting Started
 
-*代码正在进行最后清理，即将开源，敬请期待！(Code is being cleaned up and will be released soon!)*
-
+*Code is being cleaned up and will be released soon!*
